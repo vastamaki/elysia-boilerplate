@@ -1,0 +1,42 @@
+services:
+  postgres:
+    container_name: boilerplate_postgres
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    volumes:
+      - boilerplate_postgres_data:/var/lib/postgresql
+  dragonfly:
+    image: "docker.dragonflydb.io/dragonflydb/dragonfly:latest"
+    ulimits:
+      memlock: -1
+    ports:
+      - "6379:6379"
+    volumes:
+      - dragonflydata:/data
+  api:
+    container_name: boilerplate_api
+    build:
+      context: .
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    stop_signal: SIGINT
+    stop_grace_period: 3s
+    networks:
+      - backend
+
+networks:
+  backend:
+
+volumes:
+  boilerplate_postgres_data:
+  dragonflydata:

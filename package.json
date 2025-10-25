@@ -1,0 +1,6 @@
+{
+  "name": "elysia-boilerplate",
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.2"
+  }
+}
