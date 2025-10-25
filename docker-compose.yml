@@ -1,0 +1,36 @@
+services:
+  postgres:
+    container_name: boilerplate_postgres
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+    volumes:
+      - boilerplate_postgres_data:/var/lib/postgresql
+  api:
+    container_name: boilerplate_api
+    image: oven/bun:1.3
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    working_dir: /app
+    stop_signal: SIGINT
+    stop_grace_period: 3s
+    networks:
+      - backend
+    volumes:
+      - .:/app
+    command: "/bin/sh -c 'bun install && bun run --watch src/index.ts'"
+
+networks:
+  backend:
+
+volumes:
+  boilerplate_postgres_data:
