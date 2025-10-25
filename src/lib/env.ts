@@ -13,6 +13,7 @@ const schema = z.object({
   DB_PORT: z.coerce.number().default(5432),
   BETTER_AUTH_SECRET: z.string().min(32),
   BETTER_AUTH_URL: z.url(),
+  RESEND_API_KEY: z.string(),
 });
 
 export async function parseENV() {
