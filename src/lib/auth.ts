@@ -13,7 +13,7 @@ const options = {
   }),
   emailAndPassword: {
     enabled: true,
-    sendResetPassword: async ({ user, url }: { user: any; url: string }) => {
+    sendResetPassword: async ({ user, url }) => {
       await emailService.sendResetPasswordEmail(user.email, url);
     },
   },
@@ -27,13 +27,9 @@ const options = {
     }),
   ],
   emailVerification: {
-    sendVerificationEmail: async ({
-      user,
-      url,
-    }: {
-      user: any;
-      url: string;
-    }) => {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
       await emailService.sendVerificationEmail(user.email, url);
     },
   },
