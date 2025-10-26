@@ -13,6 +13,9 @@ const options = {
   }),
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url }: { user: any; url: string }) => {
+      await emailService.sendResetPasswordEmail(user.email, url);
+    },
   },
   plugins: [
     admin({

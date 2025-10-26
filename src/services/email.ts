@@ -60,7 +60,7 @@ class EmailService {
     return this.sendEmail(to, "Verify your email", html);
   }
 
-  async sendPasswordResetEmail(to: string, resetLink: string) {
+  async sendResetPasswordEmail(to: string, resetLink: string) {
     const html = await render(ResetPasswordEmail({ resetLink }));
     return this.sendEmail(to, "Reset your password", html);
   }

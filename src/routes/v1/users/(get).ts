@@ -1,13 +1,13 @@
 import { t } from "elysia";
 import type { App } from "src/index";
 import { db } from "src/lib/db";
-import { users } from "src/lib/db/schema/auth";
+import { usersTable } from "src/lib/db/schema/auth";
 
 export default (app: App) =>
   app.post(
     "",
     async () => {
-      const results = await db.select().from(users);
+      const results = await db.select().from(usersTable);
 
       return results;
     },

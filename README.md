@@ -1,5 +1,9 @@
 # Elysia with Bun runtime
 
+This boilerplate doesn't enforce any project structure. Feel free to organize your files as you see fit. Feature based or domain based structures are both good approaches, but can be overwhelming for small projects. Start simple and refactor as needed.
+
+The project uses plugin which converts the routes directory into nextjs like file based routing.
+
 ## Getting Started
 
 This project demonstrates how to run an Elysia application using the Bun runtime.

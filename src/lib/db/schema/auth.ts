@@ -4,7 +4,7 @@ export const UserRoles = ["admin", "user"] as const;
 const userRoleEnum = pgEnum("role", ["admin", "user"]);
 export type UserRole = (typeof userRoleEnum.enumValues)[number];
 
-export const users = pgTable("users", {
+export const usersTable = pgTable("users", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
@@ -23,7 +23,7 @@ export const users = pgTable("users", {
   banExpires: timestamp("ban_expires"),
 });
 
-export const sessions = pgTable("sessions", {
+export const sessionsTable = pgTable("sessions", {
   id: text("id").primaryKey(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
@@ -37,17 +37,17 @@ export const sessions = pgTable("sessions", {
   userAgent: text("user_agent"),
   userId: text("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => usersTable.id, { onDelete: "cascade" }),
   impersonatedBy: text("impersonated_by"),
 });
 
-export const accounts = pgTable("accounts", {
+export const accountsTable = pgTable("accounts", {
   id: text("id").primaryKey(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
   userId: text("user_id")
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => usersTable.id, { onDelete: "cascade" }),
   accessToken: text("access_token"),
   refreshToken: text("refresh_token"),
   idToken: text("id_token"),
@@ -63,7 +63,7 @@ export const accounts = pgTable("accounts", {
     .notNull(),
 });
 
-export const verifications = pgTable("verifications", {
+export const verificationsTable = pgTable("verifications", {
   id: text("id").primaryKey(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
