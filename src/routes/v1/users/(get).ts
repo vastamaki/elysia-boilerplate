@@ -3,11 +3,20 @@ import type { App } from "src/index";
 import { db } from "src/lib/db";
 import { usersTable } from "src/lib/db/schema/auth";
 
+const cacheKey = "users:list";
+
 export default (app: App) =>
   app.post(
     "",
-    async () => {
+    async ({ redis }) => {
+      const cachedResults = await redis.get(cacheKey);
+
+      if (cachedResults) {
+        return JSON.parse(cachedResults);
+      }
+
       const results = await db.select().from(usersTable);
+      await redis.set(cacheKey, JSON.stringify(results));
 
       return results;
     },

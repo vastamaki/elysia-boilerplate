@@ -11,6 +11,7 @@ const schema = z.object({
   DB_PASSWORD: z.string(),
   DB_HOST: z.string().default("localhost"),
   DB_PORT: z.coerce.number().default(5432),
+  REDIS_URL: z.url().optional(),
   BETTER_AUTH_SECRET: z.string().min(32),
   BETTER_AUTH_URL: z.url(),
   RESEND_API_KEY: z.string(),

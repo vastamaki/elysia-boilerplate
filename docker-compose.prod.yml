@@ -13,6 +13,14 @@ services:
       - backend
     volumes:
       - boilerplate_postgres_data:/var/lib/postgresql
+  dragonfly:
+    image: "docker.dragonflydb.io/dragonflydb/dragonfly:latest"
+    ulimits:
+      memlock: -1
+    ports:
+      - "6379:6379"
+    volumes:
+      - dragonflydata:/data
   api:
     container_name: boilerplate_api
     build:
@@ -31,3 +39,4 @@ networks:
 
 volumes:
   boilerplate_postgres_data:
+  dragonflydata:

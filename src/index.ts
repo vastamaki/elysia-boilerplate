@@ -4,10 +4,12 @@ import { corsPlugin } from "src/plugins/cors";
 import { openAPIPlugin } from "src/plugins/openapi";
 import { router } from "elysia-router";
 import { env } from "src/lib/env";
+import { redisClient } from "src/lib/redis";
 
 const app = new Elysia({
   prefix: "/api",
 })
+  .decorate("redis", redisClient)
   .use(corsPlugin)
   .use(authPlugin)
   .use(openAPIPlugin)
