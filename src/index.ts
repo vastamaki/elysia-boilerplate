@@ -1,11 +1,9 @@
 import { Elysia } from "elysia";
-import { parseENV } from "./lib/env";
 import { authPlugin } from "src/plugins/auth";
 import { corsPlugin } from "src/plugins/cors";
 import { openAPIPlugin } from "src/plugins/openapi";
 import { router } from "elysia-router";
-
-parseENV();
+import { env } from "src/lib/env";
 
 const app = new Elysia({
   prefix: "/api",
@@ -18,7 +16,7 @@ const app = new Elysia({
       directory: "src/routes",
     })
   )
-  .listen(process.env.PORT);
+  .listen(env.PORT);
 
 console.log(
   `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`

@@ -14,17 +14,7 @@ const schema = z.object({
   BETTER_AUTH_SECRET: z.string().min(32),
   BETTER_AUTH_URL: z.url(),
   RESEND_API_KEY: z.string(),
+  FROM_EMAIL: z.string(),
 });
 
-export async function parseENV() {
-  try {
-    schema.parse(Bun.env);
-  } catch (err) {
-    console.error("Invalid environment variables:", err);
-    process.exit(1);
-  }
-}
-
-declare module "bun" {
-  interface Env extends z.TypeOf<typeof schema> {}
-}
+export const env = schema.parse(Bun.env);

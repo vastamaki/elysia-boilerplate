@@ -1,6 +1,7 @@
 import { Elysia } from "elysia";
 import { fromTypes, openapi } from "@elysiajs/openapi";
 import { auth } from "src/lib/auth";
+import { env } from "src/lib/env";
 
 let _schema: ReturnType<typeof auth.api.generateOpenAPISchema>;
 const getSchema = async () => (_schema ??= auth.api.generateOpenAPISchema());
@@ -29,7 +30,7 @@ export const OpenAPI = {
 export const openAPIPlugin = new Elysia().use(
   openapi({
     path: "docs",
-    enabled: process.env.NODE_ENV !== "production",
+    enabled: env.NODE_ENV !== "production",
     references: fromTypes(),
     documentation: {
       components: await OpenAPI.components,

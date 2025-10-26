@@ -1,17 +1,11 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "src/lib/db";
-import { openAPI } from "better-auth/plugins";
-import { Resend } from "resend";
-import { render } from "@react-email/render";
-import OTPEmail from "src/emails/otp";
-import WelcomeEmail from "src/emails/welcome";
-import ResetPasswordEmail from "src/emails/reset-password";
-import VerifyEmail from "src/emails/verify-email";
+import { openAPI, admin, customSession } from "better-auth/plugins";
+import { emailService } from "src/services/email";
+import type { UserRole } from "src/lib/db/schema/auth";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-export const auth = betterAuth({
+const options = {
   basePath: "/api/auth",
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -21,11 +15,14 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [
+    admin({
+      adminRoles: ["admin"],
+      defaultRole: "user",
+    }),
     openAPI({
       path: "/api/auth",
     }),
   ],
-  disabledPaths: ["/auth/api/get-session"],
   emailVerification: {
     sendVerificationEmail: async ({
       user,
@@ -34,30 +31,22 @@ export const auth = betterAuth({
       user: any;
       url: string;
     }) => {
-      const html = await render(VerifyEmail({ verificationLink: url }));
-      await resend.emails.send({
-        from: "noreply@yourcompany.com",
-        to: user.email,
-        subject: "Verify your email",
-        html,
-      });
+      await emailService.sendVerificationEmail(user.email, url);
     },
   },
-  passwordReset: {
-    sendResetPasswordEmail: async ({
-      user,
-      url,
-    }: {
-      user: any;
-      url: string;
-    }) => {
-      const html = await render(ResetPasswordEmail({ resetLink: url }));
-      await resend.emails.send({
-        from: "noreply@yourcompany.com",
-        to: user.email,
-        subject: "Reset your password",
-        html,
-      });
-    },
-  },
+} satisfies BetterAuthOptions;
+
+export const auth = betterAuth({
+  plugins: [
+    ...(options.plugins ?? []),
+    customSession(async ({ user, session }) => {
+      return {
+        user: {
+          ...user,
+          role: user.role as UserRole,
+        },
+        session,
+      };
+    }, options),
+  ],
 });

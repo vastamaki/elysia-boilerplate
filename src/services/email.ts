@@ -1,0 +1,86 @@
+import { Resend } from "resend";
+import { render } from "@react-email/render";
+import OTPEmail from "src/emails/otp";
+import WelcomeEmail from "src/emails/welcome";
+import ResetPasswordEmail from "src/emails/reset-password";
+import VerifyEmail from "src/emails/verify-email";
+import { env } from "src/lib/env";
+
+/**
+ * Email service for sending various types of emails using Resend
+ *
+ * The default sender email can be configured via FROM_EMAIL environment variable.
+ *
+ * Usage examples:
+ * ```typescript
+ * import { emailService } from 'src/services/email';
+ *
+ * // Send welcome email
+ * await emailService.sendWelcomeEmail('user@example.com', 'John Doe');
+ *
+ * // Send custom email with custom sender
+ * await emailService.sendCustomEmail(
+ *   'user@example.com',
+ *   'Custom Subject',
+ *   '<h1>Custom HTML</h1>',
+ *   'custom@yourcompany.com'
+ * );
+ * ```
+ */
+class EmailService {
+  private resend: Resend;
+  private defaultFromEmail: string;
+
+  constructor(apiKey: string, defaultFromEmail: string) {
+    this.resend = new Resend(apiKey);
+    this.defaultFromEmail = defaultFromEmail;
+  }
+
+  private async sendEmail(
+    to: string,
+    subject: string,
+    html: string,
+    from?: string
+  ) {
+    return await this.resend.emails.send({
+      from: from || this.defaultFromEmail,
+      to,
+      subject,
+      html,
+    });
+  }
+
+  async sendWelcomeEmail(to: string, name: string) {
+    const html = await render(WelcomeEmail({ name }));
+    return this.sendEmail(to, "Welcome to Our Platform!", html);
+  }
+
+  async sendVerificationEmail(to: string, verificationLink: string) {
+    const html = await render(VerifyEmail({ verificationLink }));
+    return this.sendEmail(to, "Verify your email", html);
+  }
+
+  async sendPasswordResetEmail(to: string, resetLink: string) {
+    const html = await render(ResetPasswordEmail({ resetLink }));
+    return this.sendEmail(to, "Reset your password", html);
+  }
+
+  async sendOTPEmail(to: string, otp: number) {
+    const html = await render(OTPEmail({ otp }));
+    return this.sendEmail(to, "Your OTP Code", html);
+  }
+
+  async sendCustomEmail(
+    to: string,
+    subject: string,
+    html: string,
+    from?: string
+  ) {
+    return this.sendEmail(to, subject, html, from);
+  }
+}
+
+export const emailService = new EmailService(
+  env.RESEND_API_KEY,
+  env.FROM_EMAIL
+);

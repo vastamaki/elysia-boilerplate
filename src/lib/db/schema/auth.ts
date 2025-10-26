@@ -1,4 +1,8 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
+
+export const UserRoles = ["admin", "user"] as const;
+const userRoleEnum = pgEnum("role", ["admin", "user"]);
+export type UserRole = (typeof userRoleEnum.enumValues)[number];
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(),
@@ -13,6 +17,10 @@ export const users = pgTable("users", {
     .$defaultFn(() => new Date())
     .$onUpdate(() => new Date())
     .notNull(),
+  role: userRoleEnum("role").notNull().default("user"),
+  banned: boolean("banned").default(false),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires"),
 });
 
 export const sessions = pgTable("sessions", {
@@ -30,6 +38,7 @@ export const sessions = pgTable("sessions", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  impersonatedBy: text("impersonated_by"),
 });
 
 export const accounts = pgTable("accounts", {
