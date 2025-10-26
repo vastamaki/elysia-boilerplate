@@ -1,10 +1,8 @@
-import { Resend } from "resend";
-import { render } from "@react-email/render";
-import OTPEmail from "src/emails/otp";
-import WelcomeEmail from "src/emails/welcome";
-import ResetPasswordEmail from "src/emails/reset-password";
-import VerifyEmail from "src/emails/verify-email";
-import { env } from "src/lib/env";
+import { render } from '@react-email/render';
+import { Resend } from 'resend';
+import ResetPasswordEmail from 'src/emails/reset-password';
+import VerifyEmail from 'src/emails/verify-email';
+import { env } from 'src/lib/env';
 
 /**
  * Email service for sending various types of emails using Resend
@@ -36,12 +34,7 @@ class EmailService {
     this.defaultFromEmail = defaultFromEmail;
   }
 
-  private async sendEmail(
-    to: string,
-    subject: string,
-    html: string,
-    from?: string
-  ) {
+  private async sendEmail(to: string, subject: string, html: string, from?: string) {
     return await this.resend.emails.send({
       from: from || this.defaultFromEmail,
       to,
@@ -50,37 +43,19 @@ class EmailService {
     });
   }
 
-  async sendWelcomeEmail(to: string, name: string) {
-    const html = await render(WelcomeEmail({ name }));
-    return this.sendEmail(to, "Welcome to Our Platform!", html);
-  }
-
   async sendVerificationEmail(to: string, verificationLink: string) {
     const html = await render(VerifyEmail({ verificationLink }));
-    return this.sendEmail(to, "Verify your email", html);
+    return this.sendEmail(to, 'Verify your email', html);
   }
 
   async sendResetPasswordEmail(to: string, resetLink: string) {
     const html = await render(ResetPasswordEmail({ resetLink }));
-    return this.sendEmail(to, "Reset your password", html);
+    return this.sendEmail(to, 'Reset your password', html);
   }
 
-  async sendOTPEmail(to: string, otp: number) {
-    const html = await render(OTPEmail({ otp }));
-    return this.sendEmail(to, "Your OTP Code", html);
-  }
-
-  async sendCustomEmail(
-    to: string,
-    subject: string,
-    html: string,
-    from?: string
-  ) {
+  async sendCustomEmail(to: string, subject: string, html: string, from?: string) {
     return this.sendEmail(to, subject, html, from);
   }
 }
 
-export const emailService = new EmailService(
-  env.RESEND_API_KEY,
-  env.FROM_EMAIL
-);
+export const emailService = new EmailService(env.RESEND_API_KEY, env.FROM_EMAIL);

@@ -1,10 +1,10 @@
-import { drizzle } from "drizzle-orm/bun-sql";
-import { SQL } from "bun";
-import * as schema from "src/lib/db/schema";
-import { env } from "src/lib/env";
+import { SQL } from 'bun';
+import { drizzle } from 'drizzle-orm/bun-sql';
+import * as schema from 'src/lib/db/schema';
+import { env } from 'src/lib/env';
 
 export const databaseClient = new SQL({
-  adapter: "postgres",
+  adapter: 'postgres',
   database: env.DB_NAME,
   host: env.DB_HOST,
   port: env.DB_PORT,

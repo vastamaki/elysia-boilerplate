@@ -1,14 +1,14 @@
-import { betterAuth, type BetterAuthOptions } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "src/lib/db";
-import { openAPI, admin, customSession } from "better-auth/plugins";
-import { emailService } from "src/services/email";
-import type { UserRole } from "src/lib/db/schema/auth";
+import { type BetterAuthOptions, betterAuth } from 'better-auth';
+import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { admin, customSession, openAPI } from 'better-auth/plugins';
+import { db } from 'src/lib/db';
+import type { UserRole } from 'src/lib/db/schema/auth';
+import { emailService } from 'src/services/email';
 
 const options = {
-  basePath: "/api/auth",
+  basePath: '/api/auth',
   database: drizzleAdapter(db, {
-    provider: "pg",
+    provider: 'pg',
     usePlural: true,
   }),
   emailAndPassword: {
@@ -19,11 +19,11 @@ const options = {
   },
   plugins: [
     admin({
-      adminRoles: ["admin"],
-      defaultRole: "user",
+      adminRoles: ['admin'],
+      defaultRole: 'user',
     }),
     openAPI({
-      path: "/api/auth",
+      path: '/api/auth',
     }),
   ],
   emailVerification: {
@@ -36,6 +36,7 @@ const options = {
 } satisfies BetterAuthOptions;
 
 export const auth = betterAuth({
+  ...options,
   plugins: [
     ...(options.plugins ?? []),
     customSession(async ({ user, session }) => {
